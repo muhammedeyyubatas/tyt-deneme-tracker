@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYT Deneme Takip ve Otomatik Net Hesaplayıcı</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TYT Takip">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3426/3426653.png">
+    <link rel="manifest" id="manifest-placeholder">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--text);
+            margin: 0 0 8px 0;
+            font-size: 26px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .install-banner {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .install-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-icon {
+            font-size: 24px;
+        }
+
+        .install-text strong {
+            display: block;
+            color: #1e40af;
+            font-size: 14px;
+        }
+
+        .install-text span {
+            color: #3b82f6;
+            font-size: 12px;
+        }
+
+        .btn-install {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-install:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        thead tr:first-child th {
+            background-color: #1e293b;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        thead tr:nth-child(2) th {
+            background-color: #334155;
+            color: #ffffff;
+            font-size: 12px;
+        }
+
+        .lesson-header {
+            background-color: #2563eb !important;
+        }
+
+        .total-header {
+            background-color: #059669 !important;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        input[type="number"], input[type="text"], input[type="date"] {
+            width: 50px;
+            padding: 4px 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="date"] {
+            width: 110px;
+        }
+
+        input[type="text"].note-input {
+            width: 120px;
+            text-align: left;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .net-cell {
+            font-weight: bold;
+            color: #2563eb;
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .total-net-cell {
+            font-weight: bold;
+            color: #059669;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .summary-row {
+            background-color: #e2e8f0 !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="install-banner" id="installBanner">
+        <div class="install-info">
+            <span class="install-icon">📱</span>
+            <div class="install-text">
+                <strong>Uygulama Olarak Kullanın</strong>
+                <span id="installGuideText">Bu sayfayı telefonunuza/bilgisayarınıza uygulama gibi ekleyebilirsiniz.</span>
+            </div>
+        </div>
+        <button class="btn-install" id="installBtn" onclick="triggerInstall()">📱 Ana Ekrana Ekle</button>
+    </div>
+
+    <div class="header">
+        <h1>TYT Deneme Takip ve Otomatik Net Hesaplayıcı</h1>
+        <p>Doğru ve yanlış sayılarınızı girin; netleriniz ve toplamlarınız otomatik hesaplansın.</p>
+    </div>
+
+    <div class="actions">
+        <button class="btn" onclick="exportData()">Verileri Yedekle (İndir)</button>
+        <button class="btn btn-danger" onclick="clearAll()">Tümünü Temizle</button>
+    </div>
+
+    <div class="table-responsive">
+        <table id="denemeTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">Deneme No</th>
+                    <th rowspan="2">Tarih</th>
+                    <th colspan="3" class="lesson-header">Türkçe (40 S)</th>
+                    <th colspan="3" class="lesson-header">Sosyal (20 S)</th>
+                    <th colspan="3" class="lesson-header">Matematik (40 S)</th>
+                    <th colspan="3" class="lesson-header">Fen Bilimleri (20 S)</th>
+                    <th colspan="3" class="total-header">Toplam (120 S)</th>
+                    <th rowspan="2">Puan</th>
+                    <th rowspan="2">Sıralama</th>
+                    <th rowspan="2">Notlar / Analiz</th>
+                </tr>
+                <tr>
+                    <th>D</th><th>Y</th><th>Net</th>
+                    <th>D</th><th>Y</th><th>Net</th>
+                    <th>D</th><th>Y</th><th>Net</th>
+                    <th>D</th><th>Y</th><th>Net</th>
+                    <th>D</th><th>Y</th><th>Net</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+            <tfoot>
+                <tr class="summary-row" id="avgRow">
+                    <td colspan="2">ORTALAMA</td>
+                    <td id="avg-tr-d">-</td><td id="avg-tr-y">-</td><td id="avg-tr-n">-</td>
+                    <td id="avg-sos-d">-</td><td id="avg-sos-y">-</td><td id="avg-sos-n">-</td>
+                    <td id="avg-mat-d">-</td><td id="avg-mat-y">-</td><td id="avg-mat-n">-</td>
+                    <td id="avg-fen-d">-</td><td id="avg-fen-y">-</td><td id="avg-fen-n">-</td>
+                    <td id="avg-top-d">-</td><td id="avg-top-y">-</td><td id="avg-top-n">-</td>
+                    <td id="avg-puan">-</td><td id="avg-sira">-</td><td>-</td>
+                </tr>
+                <tr class="summary-row" id="maxRow">
+                    <td colspan="2">EN YÜKSEK</td>
+                    <td id="max-tr-d">-</td><td id="max-tr-y">-</td><td id="max-tr-n">-</td>
+                    <td id="max-sos-d">-</td><td id="max-sos-y">-</td><td id="max-sos-n">-</td>
+                    <td id="max-mat-d">-</td><td id="max-mat-y">-</td><td id="max-mat-n">-</td>
+                    <td id="max-fen-d">-</td><td id="max-fen-y">-</td><td id="max-fen-n">-</td>
+                    <td id="max-top-d">-</td><td id="max-top-y">-</td><td id="max-top-n">-</td>
+                    <td id="max-puan">-</td><td id="max-sira">-</td><td>-</td>
+                </tr>
+                <tr class="summary-row" id="minRow">
+                    <td colspan="2">EN DÜŞÜK</td>
+                    <td id="min-tr-d">-</td><td id="min-tr-y">-</td><td id="min-tr-n">-</td>
+                    <td id="min-sos-d">-</td><td id="min-sos-y">-</td><td id="min-sos-n">-</td>
+                    <td id="min-mat-d">-</td><td id="min-mat-y">-</td><td id="min-mat-n">-</td>
+                    <td id="min-fen-d">-</td><td id="min-fen-y">-</td><td id="min-fen-n">-</td>
+                    <td id="min-top-d">-</td><td id="min-top-y">-</td><td id="min-top-n">-</td>
+                    <td id="min-puan">-</td><td id="min-sira">-</td><td>-</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    const myManifest = {
+        "name": "TYT Deneme Takip Çizelgesi",
+        "short_name": "TYT Takip",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#ffffff",
+        "theme_color": "#2563eb",
+        "icons": [{
+            "src": "https://cdn-icons-png.flaticon.com/512/3426/3426653.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }]
+    };
+    const stringManifest = JSON.stringify(myManifest);
+    const blob = new Blob([stringManifest], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(blob);
+    document.querySelector('#manifest-placeholder').setAttribute('href', manifestURL);
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    const guideText = document.getElementById('installGuideText');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+    });
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        guideText.textContent = "Safari'de alt kısımdaki 'Paylaş' (⬆️) ikonuna basıp 'Ana Ekrana Ekle' seçeneğini seçin.";
+        installBtn.style.display = 'none';
+    }
+
+    function triggerInstall() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                deferredPrompt = null;
+            });
+        } else if (!isIOS) {
+            alert("Ana ekrana eklemek için tarayıcınızın sağ üstündeki üç nokta (⋮) menüsünden 'Ana Ekrana Ekle' veya 'Uygulamayı Yükle' seçeneğine basabilirsiniz.");
+        }
+    }
+
+    const TOTAL_DENEME = 20;
+    const lessons = ['tr', 'sos', 'mat', 'fen'];
+
+    function initTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        for (let i = 1; i <= TOTAL_DENEME; i++) {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-index', i);
+
+            tr.innerHTML = `
+                <td><strong>${i}. DENEME</strong></td>
+                <td><input type="date" class="input-date" onchange="calculate()"></td>
+                <td><input type="number" min="0" max="40" class="input-tr-d" oninput="calculate()"></td>
+                <td><input type="number" min="0" max="40" class="input-tr-y" oninput="calculate()"></td>
+                <td class="net-cell cell-tr-n">0.00</td>
+                <td><input type="number" min="0" max="20" class="input-sos-d" oninput="calculate()"></td>
+                <td><input type="number" min="0" max="20" class="input-sos-y" oninput="calculate()"></td>
+                <td class="net-cell cell-sos-n">0.00</td>
+                <td><input type="number" min="0" max="40" class="input-mat-d" oninput="calculate()"></td>
+                <td><input type="number" min="0" max="40" class="input-mat-y" oninput="calculate()"></td>
+                <td class="net-cell cell-mat-n">0.00</td>
+                <td><input type="number" min="0" max="20" class="input-fen-d" oninput="calculate()"></td>
+                <td><input type="number" min="0" max="20" class="input-fen-y" oninput="calculate()"></td>
+                <td class="net-cell cell-fen-n">0.00</td>
+                <td class="cell-top-d" style="font-weight:600;">0</td>
+                <td class="cell-top-y" style="font-weight:600;">0</td>
+                <td class="total-net-cell cell-top-n">0.00</td>
+                <td><input type="number" step="0.01" class="input-puan" placeholder="Puan" oninput="calculate()" style="width:65px;"></td>
+                <td><input type="number" class="input-sira" placeholder="Sıra" oninput="calculate()" style="width:65px;"></td>
+                <td><input type="text" class="note-input" placeholder="Not / Analiz" oninput="saveData()"></td>
+            `;
+            tbody.appendChild(tr);
+        }
+        loadData();
+    }
+
+    function calculate() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        let stats = { tr: { d: [], y: [], n: [] }, sos: { d: [], y: [], n: [] }, mat: { d: [], y: [], n: [] }, fen: { d: [], y: [], n: [] }, top: { d: [], y: [], n: [] }, puan: [], sira: [] };
+
+        rows.forEach(row => {
+            let rowTotalD = 0, rowTotalY = 0, rowTotalN = 0, hasInput = false;
+
+            lessons.forEach(l => {
+                const dInput = row.querySelector(`.input-${l}-d`);
+                const yInput = row.querySelector(`.input-${l}-y`);
+                const nCell = row.querySelector(`.cell-${l}-n`);
+
+                const d = parseFloat(dInput.value) || 0;
+                const y = parseFloat(yInput.value) || 0;
+                const net = d - (y / 4);
+
+                if (dInput.value !== '' || yInput.value !== '') hasInput = true;
+
+                nCell.textContent = net.toFixed(2);
+                rowTotalD += d; rowTotalY += y; rowTotalN += net;
+
+                if (dInput.value !== '' || yInput.value !== '') {
+                    stats[l].d.push(d); stats[l].y.push(y); stats[l].n.push(net);
+                }
+            });
+
+            row.querySelector('.cell-top-d').textContent = rowTotalD;
+            row.querySelector('.cell-top-y').textContent = rowTotalY;
+            row.querySelector('.cell-top-n').textContent = rowTotalN.toFixed(2);
+
+            const puanVal = row.querySelector('.input-puan').value;
+            const siraVal = row.querySelector('.input-sira').value;
+
+            if (hasInput) {
+                stats.top.d.push(rowTotalD); stats.top.y.push(rowTotalY); stats.top.n.push(rowTotalN);
+                if (puanVal !== '') stats.puan.push(parseFloat(puanVal));
+                if (siraVal !== '') stats.sira.push(parseFloat(siraVal));
+            }
+        });
+
+        updateSummary(stats);
+        saveData();
+    }
+
+    function calcAvg(arr) { return (!arr || arr.length === 0) ? '-' : (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2); }
+    function calcMax(arr) { return (!arr || arr.length === 0) ? '-' : Math.max(...arr).toFixed(2); }
+    function calcMin(arr) { return (!arr || arr.length === 0) ? '-' : Math.min(...arr).toFixed(2); }
+
+    function updateSummary(stats) {
+        [...lessons, 'top'].forEach(k => {
+            document.getElementById(`avg-${k}-d`).textContent = calcAvg(stats[k].d);
+            document.getElementById(`avg-${k}-y`).textContent = calcAvg(stats[k].y);
+            document.getElementById(`avg-${k}-n`).textContent = calcAvg(stats[k].n);
+
+            document.getElementById(`max-${k}-d`).textContent = calcMax(stats[k].d);
+            document.getElementById(`max-${k}-y`).textContent = calcMax(stats[k].y);
+            document.getElementById(`max-${k}-n`).textContent = calcMax(stats[k].n);
+
+            document.getElementById(`min-${k}-d`).textContent = calcMin(stats[k].d);
+            document.getElementById(`min-${k}-y`).textContent = calcMin(stats[k].y);
+            document.getElementById(`min-${k}-n`).textContent = calcMin(stats[k].n);
+        });
+
+        document.getElementById('avg-puan').textContent = calcAvg(stats.puan);
+        document.getElementById('max-puan').textContent = calcMax(stats.puan);
+        document.getElementById('min-puan').textContent = calcMin(stats.puan);
+
+        document.getElementById('avg-sira').textContent = calcAvg(stats.sira);
+        document.getElementById('max-sira').textContent = calcMin(stats.sira);
+        document.getElementById('min-sira').textContent = calcMax(stats.sira);
+    }
+
+    function saveData() {
+        const data = [];
+        document.querySelectorAll('#tableBody tr').forEach(row => {
+            const rowData = {
+                date: row.querySelector('.input-date').value,
+                puan: row.querySelector('.input-puan').value,
+                sira: row.querySelector('.input-sira').value,
+                note: row.querySelector('.note-input').value
+            };
+            lessons.forEach(l => {
+                rowData[`${l}_d`] = row.querySelector(`.input-${l}-d`).value;
+                rowData[`${l}_y`] = row.querySelector(`.input-${l}-y`).value;
+            });
+            data.push(rowData);
+        });
+        localStorage.setItem('tyt_deneme_data', JSON.stringify(data));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('tyt_deneme_data');
+        if (!saved) return;
+        try {
+            const data = JSON.parse(saved);
+            const rows = document.querySelectorAll('#tableBody tr');
+            data.forEach((rowData, index) => {
+                if (rows[index]) {
+                    const row = rows[index];
+                    row.querySelector('.input-date').value = rowData.date || '';
+                    row.querySelector('.input-puan').value = rowData.puan || '';
+                    row.querySelector('.input-sira').value = rowData.sira || '';
+                    row.querySelector('.note-input').value = rowData.note || '';
+                    lessons.forEach(l => {
+                        row.querySelector(`.input-${l}-d`).value = rowData[`${l}_d`] || '';
+                        row.querySelector(`.input-${l}-y`).value = rowData[`${l}_y`] || '';
+                    });
+                }
+            });
+            calculate();
+        } catch (e) { console.error(e); }
+    }
+
+    function clearAll() {
+        if (confirm("Tüm verileri silmek istediğinizden emin misiniz?")) {
+            localStorage.removeItem('tyt_deneme_data');
+            initTable();
+        }
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem('tyt_deneme_data') || '[]');
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "tyt_deneme_yedek.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        document.body.removeChild(downloadAnchor);
+    }
+
+    document.addEventListener('DOMContentLoaded', initTable);
+</script>
+
+</body>
+</html>
